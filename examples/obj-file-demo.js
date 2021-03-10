@@ -185,12 +185,14 @@ class Rock {
 		}
 		this.update_time();
 		this.y_vel = this.y_init + this.g * (this.t / 100);
-		this.check_for_boundary_collision();
+		let collison = this.check_for_boundary_collision();
 		this.y_translation = this.y_init * ((this.t)) + 0.5 * this.g * ((this.t)) * ((this.t));
 		let desired = this.model_transform.times(Mat4.translation(this.x_vel, this.y_translation, 0));
 		this.model_transform = desired.map((x, i) => Vector.from(this.model_transform[i]).mix(x, 0.5));
 		this.x_pos = this.model_transform[0][3];
 		this.y_pos = this.model_transform[1][3];
+		if(collison == true)
+		    return -1;
 		return 0;
 	}
 	check_for_boundary_collision() {
@@ -200,12 +202,14 @@ class Rock {
 			if(this.model_transform[1][3] < 1 + correction_factor) this.model_transform[1][3] = 1 + correction_factor;
 			this.y_init = -1 * this.y_vel;
 			this.time = 1;
+			return true;
 		}
 		if(this.model_transform[0][3] < (-6 + correction_factor) || this.model_transform[0][3] > (6 + correction_factor)) {
 			if(this.model_transform[0][3] > (6 + correction_factor)) this.model_transform[0][3] = (6 + correction_factor);
 			if(this.model_transform[0][3] < (-6 + correction_factor)) this.model_transform[0][3] = (-6 + correction_factor);
 			this.x_vel += Math.random() / 20;
 			this.x_vel = -1 * this.x_vel;
+			return true;
 		}
 	}
 	set_dead() {
@@ -281,6 +285,14 @@ export class Obj_File_Demo extends Scene {
 
 		this.high_score = 0;
 		this.initialize_new_game(1);
+		this.boing = new Audio("boing.mp3")
+		this.boing.loop = false
+
+		this.theme = new Audio("theme.mp3")
+		this.theme.loop = true;
+		this.theme.volume = 0.3;
+		this.playing = false;
+
 	}
 	initialize_new_game(state) {
 		//Initial Position
@@ -289,13 +301,9 @@ export class Obj_File_Demo extends Scene {
 		this.wheel_2 = this.wheel_1.times(Mat4.translation(0, 0, -4));
 		//Rocks
 		this.rocks = []
-		this.create_rock(); this.create_rock();
-// 		this.rock1 = new Rock(-5, 15, 1, 0.1, -0.3);
-// 		this.rock2 = new Rock(3, 15, 1.3, 0.12, -0.3);
-// 		this.rock3 = new Rock(0, 15, 0.7, 0.1, -0.3);
-// 		this.rocks.push(this.rock1);
-// 		this.rocks.push(this.rock2);
-//	    this.rocks.push(this.rock3);
+		this.create_rock(); 
+		this.create_rock();
+
 		this.left = false;
 		this.right = false;
 		//Score Settings
@@ -304,7 +312,11 @@ export class Obj_File_Demo extends Scene {
 		//Bullet
 		this.bullets = []
 		this.is_game_over = state;
+
 	}
+
+
+
 	make_control_panel() {
 		// make_control_panel(): Sets up a panel of interactive HTML elements, including
 		// buttons with key bindings for affecting this scene, and live info readouts.
@@ -319,6 +331,10 @@ export class Obj_File_Demo extends Scene {
 		// Add buttons so the user can actively toggle data members of our Scene:
 		this.new_line();
 		this.key_triggered_button("Start Game", ["g"], function() {
+		if(this.playing == false){
+			this.theme.play();
+			this.playing = true;
+		}
 			if(this.is_game_over == 1)
 			    this.is_game_over = 2;
 		});
@@ -342,6 +358,13 @@ export class Obj_File_Demo extends Scene {
 		});
 		this.key_triggered_button("Add a rock", ["9"], function() {
 			this.rocks.push(new Rock(0, 13, 1, 0.1, -0.3));
+		});
+		this.new_line();
+		this.key_triggered_button("Mute Theme Song", ["b"], function() {
+			if(this.theme.volume != 0)
+			    this.theme.volume = 0;
+			else
+			    this.theme.volume = 0.3;
 		});
 	}
 	move_left() {
@@ -401,6 +424,7 @@ export class Obj_File_Demo extends Scene {
 				if(r == 1) this.bullets[k].set_dead(); //Kills a bullet on Collision (Bullet is dead on collisoin)
 			}
 			var ret = this.rocks[i].update_state();
+
 			if(ret > 0) //Error Code for a live rock, need to remove it from the Array.
 			{
 				if(ret == 2) //Produce offspring for this Error Code (See: Rock.update_state())
@@ -408,9 +432,13 @@ export class Obj_File_Demo extends Scene {
 					this.rocks.push(new Rock(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), this.rocks[i].scale / 2 + 0.3, -0.1, 0.4));
 					this.rocks.push(new Rock(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), this.rocks[i].scale / 2 + 0.2, 0.1, 0.5));
 				}
+				///PLAY A SOUND
 				this.rocks.splice(i, 1); //Poof, buh-bye!
 				i -= 1; //Index adjustment after deleting an element (Rock from Array)
-			} else {
+			} 
+			else {
+				if(ret == -1){}
+				    //PLAY COLLISION SOUND
 				this.shapes.rock.draw(context, program_state, this.rocks[i].get_model_transform(), this.plastic.override(this.rocks[i].get_color())); //DRAWING happens here
 			}
 		}
