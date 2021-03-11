@@ -118,6 +118,132 @@ export class Shape_From_File extends Shape { // **Shape_From_File** is a versati
 		if(this.ready) super.draw(context, program_state, model_transform, material);
 	}
 }
+
+class Collision_Sphere {
+	constructor(starting_x, starting_y) {
+		this.x_pos = starting_x;
+		this.y_pos = starting_y;
+		this.model_transform = Mat4.identity().times(Mat4.translation(this.x_pos, this.y_pos, 0)).times(Mat4.scale(0.5, 0.5, 0.5));
+		this.t = 0;
+		this.time = 1;
+		this.color = color(1, 0, 0, 1);
+	}
+
+	update_time() {
+		this.t = this.time + 0.0016;
+		this.time = this.t;
+	}
+    
+    update_state() {
+		this.update_time();
+	    let desired = this.model_transform.times(Mat4.scale(2, 2, 0));
+		this.model_transform = desired.map((x, i) => Vector.from(this.model_transform[i]).mix(x, 0.05));
+		this.x_pos = this.model_transform[0][3];
+		this.y_pos = this.model_transform[1][3];
+		//fire color 0.735, 0.2529, 0.0975
+		this.color = color(1, 0, 0, 1 - (this.t - 1) * 20);
+		if(this.t > 1.05)
+		{
+			return 1;
+		}
+
+		return 0;
+	}
+
+    get_model_transform() {
+		return this.model_transform;
+	}
+
+	get_color() {
+		return this.color;
+	}
+
+}
+
+class Coin {
+	constructor(starting_x, starting_y, x_vel, y_vel, color) {
+		this.x_pos = starting_x;
+		this.y_pos = starting_y;
+		this.x_vel = x_vel;
+		this.y_vel = y_vel;
+		this.model_transform = Mat4.identity().times(Mat4.translation(this.x_pos, this.y_pos, 0)).times(Mat4.scale(0.2, 0.2, 0.002));
+		this.has_disappeared = 0;
+		this.t = 0;
+		this.time = 1;
+		this.radius = 0.2;
+		this.color = color;
+	}
+
+	update_time() {
+		this.t = this.time + 0.0016;
+		this.time = this.t;
+	}
+
+	update_state() {
+		this.update_time();
+		if(this.y_pos < 0.2)
+		{
+		  this.x_vel = 0;
+		  this.y_vel = 0;	
+		  this.model_transform[1][3] = 0.2;
+		}
+		this.check_for_boundary_collision();
+	    let desired = this.model_transform.times(Mat4.translation(this.x_vel, this.y_vel, 0));
+		this.model_transform = desired.map((x, i) => Vector.from(this.model_transform[i]).mix(x, 0.05));
+		this.x_pos = this.model_transform[0][3];
+		this.y_pos = this.model_transform[1][3];
+		if(this.t > 1.4)
+		{
+			this.has_disappeared = 1;
+		}
+
+		if(this.has_disappeared)
+		  return 1;
+
+		return 0;
+	}
+    
+    check_if_collected(cannon_x_pos, radius) {
+		if(this.y_pos <= 0.25 && (((this.x_pos + this.radius < cannon_x_pos + radius) && (this.x_pos + this.radius > cannon_x_pos - radius)) || ((this.x_pos - this.radius > cannon_x_pos - radius) && (this.x_pos - this.radius < cannon_x_pos + radius)))) 
+		{
+			this.has_disappeared = 1;
+			return 1;
+		}
+		return 0;
+	}
+
+	check_for_boundary_collision() {
+		if(this.model_transform[0][3] < -5.8 || this.model_transform[0][3] > 5.8) {
+			if(this.model_transform[0][3] > (5.8)) this.model_transform[0][3] = (5.8);
+			if(this.model_transform[0][3] < (-5.8)) this.model_transform[0][3] = (-5.8);
+			this.x_vel = -1 * this.x_vel;
+		}
+	}
+
+	get_x_pos() {
+		return this.x_pos;
+	}
+
+	get_y_pos() {
+		return this.y_pos;
+	}
+
+	get_model_transform() {
+		return this.model_transform;
+	}
+
+	set_disappeared() {
+		this.has_disappeared = 1;
+	}
+
+	get_disappeared() {
+		return this.has_disappeared;
+	}
+
+	get_color() {
+		return this.color;
+	}
+}
 class Bullet {
 	constructor(starting_x, y_vel) {
 		this.x_pos = starting_x;
@@ -148,7 +274,7 @@ class Bullet {
 		this.is_dead = 1;
 	}
 	get_dead() {
-		return this.is_dead();
+		return this.is_dead;
 	}
 	get_model_transform() {
 		return this.model_transform;
@@ -196,17 +322,17 @@ class Rock {
 		return 0;
 	}
 	check_for_boundary_collision() {
-		let correction_factor = 1 - this.scale;
-		if(this.model_transform[1][3] > (18 + correction_factor) || this.model_transform[1][3] < (1 + correction_factor)) {
+		let correction_factor = this.scale;
+		if(this.model_transform[1][3] > (18 + correction_factor) || this.model_transform[1][3] < (correction_factor)) {
 			if(this.model_transform[1][3] > 18 + correction_factor) this.model_transform[1][3] = 18 + correction_factor;
-			if(this.model_transform[1][3] < 1 + correction_factor) this.model_transform[1][3] = 1 + correction_factor;
+			if(this.model_transform[1][3] < correction_factor) this.model_transform[1][3] = correction_factor;
 			this.y_init = -1 * this.y_vel;
 			this.time = 1;
 			return true;
 		}
-		if(this.model_transform[0][3] < (-6 + correction_factor) || this.model_transform[0][3] > (6 + correction_factor)) {
-			if(this.model_transform[0][3] > (6 + correction_factor)) this.model_transform[0][3] = (6 + correction_factor);
-			if(this.model_transform[0][3] < (-6 + correction_factor)) this.model_transform[0][3] = (-6 + correction_factor);
+		if(this.model_transform[0][3] < (-7 + correction_factor) || this.model_transform[0][3] > (7 - correction_factor)) {
+			if(this.model_transform[0][3] > (7 - correction_factor)) this.model_transform[0][3] = (7 - correction_factor);
+			if(this.model_transform[0][3] < (-7 + correction_factor)) this.model_transform[0][3] = (-7 + correction_factor);
 			this.x_vel += Math.random() / 20;
 			this.x_vel = -1 * this.x_vel;
 			return true;
@@ -256,6 +382,7 @@ export class Obj_File_Demo extends Scene {
 			"wheel": new Shape_From_File("assets/wheel.obj"),
 			"grass": new Shape_From_File("assets/grass.obj"),
 			"bullet": new Shape_From_File("assets/bullet.obj"),
+			"coin": new Subdivision_Sphere(5),
 			'text_long': new Text_Line(55),
 		};
 		this.plastic = new Material(new defs.Phong_Shader(), {
@@ -286,9 +413,11 @@ export class Obj_File_Demo extends Scene {
 		this.high_score = 0;
 		this.initialize_new_game(1);
 		this.boing = new Audio("boing.mp3")
-		this.boing.loop = false
-
+		this.explosion = new Audio("explosion.mp3")
+        this.coin_tune = new Audio("coins.mp3")
 		this.theme = new Audio("theme.mp3")
+		this.gun = new Audio("gun.mp3")
+		this.gameover = new Audio("gameover.mp3")
 		this.theme.loop = true;
 		this.theme.volume = 0.3;
 		this.playing = false;
@@ -312,6 +441,12 @@ export class Obj_File_Demo extends Scene {
 		//Bullet
 		this.bullets = []
 		this.is_game_over = state;
+
+		//Coin
+		this.coins = []
+
+		// col-sphere
+		this.col_spheres = []
 
 	}
 
@@ -396,10 +531,19 @@ export class Obj_File_Demo extends Scene {
 			if(this.left) offset = -0.1;
 			if(this.right) offset = 0.1;
 			this.bullets.push(new Bullet((this.cannon_transform[0][3] + offset) / 0.3, 25));
+			this.gun.play();
 		}
 	}
 	create_rock() {
 		this.rocks.push(new Rock(Math.floor(Math.random() * 10) - 5, 13, (Math.random() / 1.5) + 0.8, 0.1, -0.3));
+	}
+
+	create_coin(x_pos, y_pos, color) {
+        this.coins.push(new Coin(x_pos, y_pos, Math.random()*10 - 5, -10, color));
+	}
+
+	create_col_sphere(x_pos, y_pos) {
+        this.col_spheres.push(new Collision_Sphere(x_pos, y_pos));
 	}
 	update_and_draw_bullets(context, program_state) {
 		for(let j = 0; j < this.bullets.length; j++) {
@@ -412,11 +556,12 @@ export class Obj_File_Demo extends Scene {
 			}
 		}
 	}
-	update_and_draw_rocks(context, program_state) {
+	update_and_draw_rocks(context, program_state, mode) {
 		for(let i = 0; i < this.rocks.length; i++) {
-			if(this.rocks[i].check_for_cannon_collision(this.cannon_transform[0][3], 0.7, 2) == 1) // The boulder hit you on your head!!!! Sry Game Over
+			if(!mode && this.rocks[i].check_for_cannon_collision(this.cannon_transform[0][3], 0.7, 2) == 1) // The boulder hit you on your head!!!! Sry Game Over
 			{
 				this.is_game_over = 1;
+				this.gameover.play();
 			}
 			for(let k = 0; k < this.bullets.length; k++) //Goes through each bullet looking for collision
 			{
@@ -431,14 +576,32 @@ export class Obj_File_Demo extends Scene {
 				{
 					this.rocks.push(new Rock(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), this.rocks[i].scale / 2 + 0.3, -0.1, 0.4));
 					this.rocks.push(new Rock(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), this.rocks[i].scale / 2 + 0.2, 0.1, 0.5));
+					var coin_color;
+					if(this.rocks[i].scale > 1.2)
+					{
+						coin_color = color(1, 0, 0, 1);
+					}
+
+					else
+					{
+						coin_color = color(0, 0, 1, 1);
+					}
+                    this.create_col_sphere(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos());
+					this.create_coin(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), coin_color);
+					this.explosion.play();
 				}
-				///PLAY A SOUND
+
+				else
+				{
+					this.boing.play(); ///NEED A BETTER SOUND36
+					this.create_coin(this.rocks[i].get_x_pos(), this.rocks[i].get_y_pos(), color(1, 1, 0, 1));
+				}
 				this.rocks.splice(i, 1); //Poof, buh-bye!
 				i -= 1; //Index adjustment after deleting an element (Rock from Array)
 			} 
 			else {
 				if(ret == -1){}
-				    //PLAY COLLISION SOUND
+				    //PLAY COLLISION SOUND //Collision here takes place with the walls. !!!!NEED A SOUND!!!
 				this.shapes.rock.draw(context, program_state, this.rocks[i].get_model_transform(), this.plastic.override(this.rocks[i].get_color())); //DRAWING happens here
 			}
 		}
@@ -446,6 +609,63 @@ export class Obj_File_Demo extends Scene {
 			this.create_rock();
 		}
 	}
+
+	update_and_draw_coins(context, program_state)
+	{
+        for(let i = 0; i < this.coins.length; i++) {
+            if(this.coins[i].check_if_collected(this.cannon_transform[0][3], 0.7) == 1)
+            {
+            	if(this.coins[i].get_color().equals([1, 0, 0, 1]))
+            	{
+            		this.score += 25;
+            	}
+
+            	else if(this.coins[i].get_color().equals([0, 0, 1, 1]))
+            	{
+            		this.score += 15;
+            	}
+
+            	if(this.coins[i].get_color().equals([1, 1, 0, 1]))
+            	{
+            		this.score += 10;
+            	}
+                this.coin_tune.play();
+                this.coins[i].set_disappeared();
+            }
+            var ret = this.coins[i].update_state();
+            if(ret == 1)
+            {
+            	this.coins.splice(i, 1); 
+				i -= 1; //Index adjustment after deleting an element (Rock from Array)
+            }
+
+            else
+            {
+            	this.shapes.coin.draw(context, program_state, this.coins[i].get_model_transform(), this.plastic.override(this.coins[i].get_color())); //DRAWING happens here
+            }
+        }
+	}
+
+	update_and_draw_col_spheres(context, program_state)
+	{
+		for(let i = 0; i < this.col_spheres.length; i++) {
+            var ret = this.col_spheres[i].update_state();
+            if(ret == 1)
+            {
+            	this.col_spheres.splice(i, 1); 
+				i -= 1; //Index adjustment after deleting an element (Rock from Array)
+            }
+
+            else
+            {
+            	this.shapes.ball.draw(context, program_state, this.col_spheres[i].get_model_transform(), this.plastic.override(this.col_spheres[i].get_color()));
+            }
+        }
+
+        
+
+	}
+
 	populate_grass(context, program_state) {
 		// array of box model transforms
 		var j = -10;
@@ -474,12 +694,14 @@ export class Obj_File_Demo extends Scene {
 		program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 1, 100);
 		const light_position = vec4(10, 10, 10, 1);
 		program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
+		const light_position2 = vec4(this.cannon_transform[0][3], this.cannon_transform[1][3], 0, 1);
+		program_state.lights.push(new Light(light_position2, color(0, 1, 0, 1), 10));
 		let ground_transform = Mat4.identity().times(Mat4.scale(60, 0.001, 60));
-		this.shapes.box.draw(context, program_state, ground_transform, this.plastic.override(color(1, 1, 1, 1)));
-		this.shapes.box.draw(context, program_state, ground_transform.times(Mat4.translation(0, 10, 0)), this.plastic.override(color(1, 1, 1, 1)));
+		this.shapes.box.draw(context, program_state, ground_transform, this.plastic.override(color(0, 1, 0, 1)));
+		//this.shapes.box.draw(context, program_state, ground_transform.times(Mat4.translation(0, 10, 0)), this.plastic.override(color(1, 1, 1, 1)));
 		let sky_transform = Mat4.identity().times(Mat4.translation(0, 0, -30)).times(Mat4.scale(60, 40, 0.001));
 		this.shapes.box.draw(context, program_state, sky_transform, this.plastic.override(color(0, 140, 255, 1)));
-		//this.populate_grass(context, program_state);
+// 		this.populate_grass(context, program_state);
 	}
 
 	draw_text_static(color_id,context,program_state, string_to_print,scale,x_pos,y_pos){
@@ -505,8 +727,9 @@ export class Obj_File_Demo extends Scene {
 	}
 	display(context, program_state) {
 		//0.016 ------BETTER GRAVITY ;
-
+// 		this.shapes.ball.draw(context, program_state, Mat4.identity().times(Mat4.translation(-6.5, 0, 0)), this.plastic);
 		if(this.is_game_over == 0) {
+			this.mode = 0;
 			if(this.right) this.move_right();
 			if(this.left) this.move_left();
 			this.score += 0.06;
@@ -515,13 +738,15 @@ export class Obj_File_Demo extends Scene {
 			this.shapes.wheel.draw(context, program_state, this.wheel_1, this.plastic);
 			this.shapes.wheel.draw(context, program_state, this.wheel_2, this.plastic);
 			this.update_and_draw_bullets(context, program_state);
-			this.update_and_draw_rocks(context, program_state);
+			this.update_and_draw_rocks(context, program_state, this.mode);
+			this.update_and_draw_coins(context, program_state);
+			this.update_and_draw_col_spheres(context, program_state);
 		} 
 		else if(this.is_game_over == 1) {    //This is the state of the game initially as well as when it is over.
 		    this.bullets = [];
-		    
+		    this.mode = 1;
 			this.set_scene(context, program_state);
-		    this.update_and_draw_rocks(context, program_state);
+		    this.update_and_draw_rocks(context, program_state, this.mode);
             this.draw_mainscreen_text(context,program_state);
         
 		} 
