@@ -542,6 +542,7 @@ export class Obj_File_Demo extends Scene {
 	}
 
 	create_coin(x_pos, y_pos, color) {
+		//SANCHIT C****** HAI
         this.coins.push(new Coin(x_pos, y_pos, Math.random()*10 - 5, -10, color));
 	}
 
