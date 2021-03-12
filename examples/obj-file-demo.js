@@ -378,7 +378,7 @@ export class Obj_File_Demo extends Scene {
 		this.shapes = {
 			'box': new Cube(),
 			'ball': new Subdivision_Sphere(4),
-			'rock': new (Subdivision_Sphere.prototype.make_flat_shaded_version() ) (2),
+			'rock': new (Subdivision_Sphere.prototype.make_flat_shaded_version() ) (2.5),
 			"vase": new Shape_From_File("assets/vase.obj"),
 			"wheel": new Shape_From_File("assets/wheel.obj"),
 			"grass": new Shape_From_File("assets/grass.obj"),
@@ -386,7 +386,6 @@ export class Obj_File_Demo extends Scene {
 			"coin": new Subdivision_Sphere(5),
 			'text_long': new Text_Line(55),
 		};
-        
 		this.plastic = new Material(new defs.Phong_Shader(), {
 			ambient: .3,
 			diffusivity: .8,
