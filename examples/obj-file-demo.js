@@ -537,14 +537,12 @@ export class Obj_File_Demo extends Scene {
 		}
 	}
 
-	//creates rocks 
 	create_rock() {
 		let x_vel = [-0.1,0.1];
 		this.rocks.push(new Rock(Math.floor(Math.random() * 10) - 5, 14, (Math.random() / 1.2) + 0.8, x_vel[Math.floor(Math.random()+0.5)], -0.3));
 	}
 
 	create_coin(x_pos, y_pos, color) {
-		//SANCHIT C****** HAI
         this.coins.push(new Coin(x_pos, y_pos, Math.random()*10 - 5, -10, color));
 	}
 
@@ -728,6 +726,15 @@ export class Obj_File_Demo extends Scene {
 
        // Fun, frantic and full of fast paced action, Ball Blast tasks you with destroying the slowly advancing blocks and circles before they reach your shooter
 	}
+
+
+    draw_score(context,program_state,x,y,z)
+    {
+    	let score_transform = Mat4.identity().times(Mat4.translation(x,y,z));
+    	let score = this.score;
+    	this.shapes.text_long.set_string("Score : " + Math.floor(score), context.context);
+    	this.shapes.text_long.draw(context,program_state,score_transform,this.text.white2);
+    }
 	display(context, program_state) {
 		//0.016 ------BETTER GRAVITY ;
 		if(this.is_game_over == 0) {
@@ -743,6 +750,7 @@ export class Obj_File_Demo extends Scene {
 			this.update_and_draw_rocks(context, program_state, this.mode);
 			this.update_and_draw_coins(context, program_state);
 			this.update_and_draw_col_spheres(context, program_state);
+			this.draw_score(context,program_state,3,32,-29);
 		} 
 		else if(this.is_game_over == 1) {    //This is the state of the game initially as well as when it is over.
 		    this.bullets = [];
