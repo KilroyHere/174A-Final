@@ -440,7 +440,7 @@ export class Obj_File_Demo extends Scene {
 		this.left = false;
 		this.right = false;
 		//Score Settings
-		if(this.score > this.high_score) this.high_score = Math.ceil(this.score);
+		if(this.score > this.high_score) this.high_score = Math.floor(this.score);
 		this.score = 0;
 		//Bullet
 		this.bullets = []
@@ -461,7 +461,7 @@ export class Obj_File_Demo extends Scene {
 		// buttons with key bindings for affecting this scene, and live info readouts.
 		// The next line adds a live text readout of a data member of our Scene.
 		this.live_string(box => {
-			box.textContent = "Your Score : " + (Math.ceil(this.score)) ;
+			box.textContent = "Your Score : " + (Math.floor(this.score)) ;
 		});
 		this.new_line();
 		this.live_string(box => {
