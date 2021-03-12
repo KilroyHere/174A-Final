@@ -536,6 +536,8 @@ export class Obj_File_Demo extends Scene {
 			this.gun.play();
 		}
 	}
+
+	//creates rocks 
 	create_rock() {
 		let x_vel = [-0.1,0.1];
 		this.rocks.push(new Rock(Math.floor(Math.random() * 10) - 5, 14, (Math.random() / 1.2) + 0.8, x_vel[Math.floor(Math.random()+0.5)], -0.3));
