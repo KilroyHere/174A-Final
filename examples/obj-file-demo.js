@@ -378,7 +378,7 @@ export class Obj_File_Demo extends Scene {
 		this.shapes = {
 			'box': new Cube(),
 			'ball': new Subdivision_Sphere(4),
-			'rock': new (Subdivision_Sphere.prototype.make_flat_shaded_version() ) (2.5),
+			'rock': new (Subdivision_Sphere.prototype.make_flat_shaded_version() ) (2),
 			"vase": new Shape_From_File("assets/vase.obj"),
 			"wheel": new Shape_From_File("assets/wheel.obj"),
 			"grass": new Shape_From_File("assets/grass.obj"),
@@ -496,7 +496,7 @@ export class Obj_File_Demo extends Scene {
 			if(this.left) this.left = !this.left;
 		});
 		this.key_triggered_button("Add a rock", ["9"], function() {
-			this.rocks.push(new Rock(0, 13, 1, 0.1, -0.3));
+			this.create_rock();
 		});
 		this.new_line();
 		this.key_triggered_button("Mute Theme Song", ["b"], function() {
@@ -537,7 +537,8 @@ export class Obj_File_Demo extends Scene {
 		}
 	}
 	create_rock() {
-		this.rocks.push(new Rock(Math.floor(Math.random() * 10) - 5, 13, (Math.random() / 1.5) + 0.8, 0.1, -0.3));
+		let x_vel = [-0.1,0.1];
+		this.rocks.push(new Rock(Math.floor(Math.random() * 10) - 5, 14, (Math.random() / 1.2) + 0.8, x_vel[Math.floor(Math.random()+0.5)], -0.3));
 	}
 
 	create_coin(x_pos, y_pos, color) {
@@ -700,7 +701,6 @@ export class Obj_File_Demo extends Scene {
 		program_state.lights.push(new Light(light_position2, color(0, 1, 0, 1), 10));
 		let ground_transform = Mat4.identity().times(Mat4.scale(60, 0.001, 60));
 		this.shapes.box.draw(context, program_state, ground_transform, this.plastic.override(color(0, 1, 0, 1)));
-		//this.shapes.box.draw(context, program_state, ground_transform.times(Mat4.translation(0, 10, 0)), this.plastic.override(color(1, 1, 1, 1)));
 		let sky_transform = Mat4.identity().times(Mat4.translation(0, 0, -30)).times(Mat4.scale(60, 40, 0.001));
 		this.shapes.box.draw(context, program_state, sky_transform, this.plastic.override(color(0, 140, 255, 1)));
 // 		this.populate_grass(context, program_state);
@@ -718,18 +718,15 @@ export class Obj_File_Demo extends Scene {
 	draw_mainscreen_text(context,program_state){
         this.draw_text_static(1, context,program_state, "Welcome to Rock Blast!",0.3,-4.5, 12);
         this.draw_text_static(1, context,program_state, "Ball Blast is an arcade game where",0.2,-5, 11);
-        this.draw_text_static(1, context,program_state, " where  you have to use a cannon ",0.2,-5, 10.5);
+        this.draw_text_static(1, context,program_state, " where you have to use a cannon ",0.2,-5, 10.5);
         this.draw_text_static(1, context,program_state, "  to shoot bombs at giant rocks to  ",0.2,-5, 10);
         this.draw_text_static(1, context,program_state, "  smash them to smithereens,or in ",0.2,-5, 9.5);
         this.draw_text_static(1, context,program_state, "          this case,coins.",0.2,-5, 9);
-
-
 
        // Fun, frantic and full of fast paced action, Ball Blast tasks you with destroying the slowly advancing blocks and circles before they reach your shooter
 	}
 	display(context, program_state) {
 		//0.016 ------BETTER GRAVITY ;
-// 		this.shapes.ball.draw(context, program_state, Mat4.identity().times(Mat4.translation(-6.5, 0, 0)), this.plastic);
 		if(this.is_game_over == 0) {
 			this.mode = 0;
 			if(this.right) this.move_right();
