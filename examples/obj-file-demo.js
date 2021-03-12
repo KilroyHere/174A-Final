@@ -728,11 +728,11 @@ export class Obj_File_Demo extends Scene {
 	}
 
 
-    draw_score(context,program_state,x,y,z)
+    draw_score(context,program_state,string ,x,y,z)
     {
     	let score_transform = Mat4.identity().times(Mat4.translation(x,y,z));
     	let score = this.score;
-    	this.shapes.text_long.set_string("Score : " + Math.floor(score), context.context);
+    	this.shapes.text_long.set_string(string, context.context);
     	this.shapes.text_long.draw(context,program_state,score_transform,this.text.white2);
     }
 	display(context, program_state) {
@@ -747,10 +747,11 @@ export class Obj_File_Demo extends Scene {
 			this.shapes.wheel.draw(context, program_state, this.wheel_1, this.plastic);
 			this.shapes.wheel.draw(context, program_state, this.wheel_2, this.plastic);
 			this.update_and_draw_bullets(context, program_state);
+			this.draw_score(context,program_state,"Score: " + Math.floor(this.score),2,32,-29);
 			this.update_and_draw_rocks(context, program_state, this.mode);
 			this.update_and_draw_coins(context, program_state);
 			this.update_and_draw_col_spheres(context, program_state);
-			this.draw_score(context,program_state,3,32,-29);
+		
 		} 
 		else if(this.is_game_over == 1) {    //This is the state of the game initially as well as when it is over.
 		    this.bullets = [];
@@ -758,6 +759,10 @@ export class Obj_File_Demo extends Scene {
 			this.set_scene(context, program_state);
 		    this.update_and_draw_rocks(context, program_state, this.mode);
             this.draw_mainscreen_text(context,program_state);
+            this.draw_score(context,program_state,"Your Score:" + Math.floor(this.score),-9,15,-25);
+            this.draw_score(context,program_state,"Your HighScore:" + Math.floor(this.high_score),-11,12,-25);
+//             if(this.score > this.high_score)
+//                  this.draw_score(context,program_state,"Personal Best!!!",-11,9,-20);
         
 		} 
 		else if(this.is_game_over == 2){ //RESTART
