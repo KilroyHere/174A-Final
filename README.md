@@ -1,7 +1,6 @@
-##
+
 # **Rock Blast**
 
-#
 
 **Team Members: Sanchit Agarwal (105389151) ; Aryan Patel (005329756)**
 
@@ -11,10 +10,7 @@ A homage to the cult favorite Ball Blast. Rock Blast is an amazing cannon shoote
 
 _Do you have what it takes to take on the bouncing geodudes? Play to find out!!!_
 
-## ![](RackMultipart20210321-4-dv0tx6_html_815e459a6fcc3042.png) ![](RackMultipart20210321-4-dv0tx6_html_46487124cab5e8d2.png)
-
-##
-
+## ![](pic1.png) ![](pic2.png)
 
 ## **Advanced Topics**
 
