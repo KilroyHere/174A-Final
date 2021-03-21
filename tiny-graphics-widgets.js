@@ -22,7 +22,7 @@ const Canvas_Widget = widgets.Canvas_Widget =
 
             const defaults = {
                 show_canvas: true, make_controls: true, show_explanation: true,
-                make_editor: false, make_code_nav: true
+                make_editor: false, make_code_nav: false
             };
             if (initial_scenes && initial_scenes[0])
                 Object.assign(options, initial_scenes[0].widget_options);
@@ -94,8 +94,8 @@ const Controls_Widget = widgets.Controls_Widget =
         // bindings, live readouts of Scene data members, etc.
         constructor(element, scenes) {
             const rules = [".controls-widget * { font-family: monospace }",
-                ".controls-widget div { background: White }",
-                ".controls-widget table { border-collapse: collapse; display:block; overflow-x: auto; table-layout: fixed;}",
+                ".controls-widget div { background: White, display:inline;}",
+                ".controls-widget table { border-collapse: collapse; display:inline; overflow-x: auto; table-layout: fixed;}",
                 ".controls-widget table.control-box { width: 1080px; border:1px; margin:0; max-height:380px; " +
                 "transition:.5s; overflow-y:scroll; background:white }",
                 ".controls-widget table.control-box:hover { max-height:500px }",

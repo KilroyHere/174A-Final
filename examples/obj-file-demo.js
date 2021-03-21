@@ -299,7 +299,7 @@ class Rock {
 		this.breaking_factor = 1;
 	}
 	update_time() {
-		this.t = this.time + 0.0016;
+		this.t = this.time + 0.002;
 		this.time = this.t;
 	}
 	update_state() {
@@ -411,6 +411,16 @@ export class Obj_File_Demo extends Scene {
             ambient: .3, diffusivity: .5, specularity: .5, texture: new Texture("assets/pic.jpg")
         });
 
+           this.sky = new Material(new Textured_Phong(), {
+            color: color(.5, .5, .5, 1),
+            ambient: 0.6, diffusivity: .5, specularity: .5, texture: new Texture("assets/sky.jpg")
+        });
+
+         for (let i=0;i<this.shapes.box.arrays.texture_coord.length;i++){
+            this.shapes.box.arrays.texture_coord[i][0] *= 1;
+            this.shapes.box.arrays.texture_coord[i][1] *= 2;
+        }
+
         this.rock_texture = new Material(new defs.Phong_Shader(),
             { specularity: 0.0, diffusivity: 1.0, color: hex_color("#bababa")});
 
@@ -509,7 +519,7 @@ export class Obj_File_Demo extends Scene {
 	move_left() {
 		if(this.cannon_transform[0][3] > -6) {
 
-			let desired = this.cannon_transform.times(Mat4.translation(-1, 0, 0));
+			let desired = this.cannon_transform.times(Mat4.translation(-1.2, 0, 0));
 			this.cannon_transform = desired.map((x, i) => Vector.from(this.cannon_transform[i]).mix(x, 0.1));
 			let x = this.cannon_transform[0][3];
 		    this.wheel_1 = Mat4.identity().times(Mat4.translation(x, 0.75, 1)).times(Mat4.scale(0.5, 0.5, 0.5)).times(Mat4.rotation(- x / 1.5, 0, 0, 1));
@@ -518,7 +528,7 @@ export class Obj_File_Demo extends Scene {
 	}
 	move_right() {
 		if(this.cannon_transform[0][3] < 6) {
-			let desired = this.cannon_transform.times(Mat4.translation(1, 0, 0));
+			let desired = this.cannon_transform.times(Mat4.translation(1.2, 0, 0));
 			this.cannon_transform = desired.map((x, i) => Vector.from(this.cannon_transform[i]).mix(x, 0.1));
 			let x = this.cannon_transform[0][3];
 		    this.wheel_1 = Mat4.identity().times(Mat4.translation(x, 0.75, 1)).times(Mat4.scale(0.5, 0.5, 0.5)).times(Mat4.rotation(- x / 1.5, 0, 0, 1));
@@ -527,7 +537,7 @@ export class Obj_File_Demo extends Scene {
 	}
 	shoot_bullet() {
 		let array_size = this.bullets.length;
-		if(array_size == 0 || this.bullets[array_size - 1].y_pos > 5) //Scaled
+		if(array_size == 0 || this.bullets[array_size - 1].y_pos > 4) //Scaled
 		{
 			let offset = 0;
 			if(this.left) offset = -0.1;
@@ -666,13 +676,11 @@ export class Obj_File_Demo extends Scene {
             }
         }
 
-        
-
 	}
 
 	populate_grass(context, program_state) {
 		// array of box model transforms
-		var j = -10;
+		var j = -9;
 		while(j < 3) {
 			this.populate_grass_horizontal(context, program_state, j);
 			j++;
@@ -680,11 +688,11 @@ export class Obj_File_Demo extends Scene {
 	}
 	populate_grass_horizontal(context, program_state, i) {
 		// array of box model transforms
-		let grass_transform = Mat4.identity().times(Mat4.translation(-11, 0.05, i * 3));
+		let grass_transform = Mat4.identity().times(Mat4.translation(-13, -0.2, i * 3)).times(Mat4.rotation(-Math.PI/2,1,0,0)).times(Mat4.scale(2,2,10));
 		var j = 0;
-		while(j < 9) {
-			this.shapes.grass.draw(context, program_state, grass_transform, this.plastic.override(color(0.1, 1, 0.1, 1)));
-			grass_transform = grass_transform.times(Mat4.translation(2.9, 0, 0));
+		while(j < 7) {
+			this.shapes.grass.draw(context, program_state, grass_transform, this.rock_texture.override(color(0,1,0,1)));
+			grass_transform = grass_transform.times(Mat4.translation(2.15, 0, 0));
 			j++;
 		}
 	}
@@ -702,9 +710,9 @@ export class Obj_File_Demo extends Scene {
 		program_state.lights.push(new Light(light_position2, color(0, 1, 0, 1), 10));
 		let ground_transform = Mat4.identity().times(Mat4.scale(60, 0.001, 60));
 		this.shapes.box.draw(context, program_state, ground_transform, this.plastic.override(color(0, 1, 0, 1)));
-		let sky_transform = Mat4.identity().times(Mat4.translation(0, 0, -30)).times(Mat4.scale(60, 40, 0.001));
-		this.shapes.box.draw(context, program_state, sky_transform, this.plastic.override(color(0, 140, 255, 1)));
-// 		this.populate_grass(context, program_state);
+		let sky_transform = Mat4.identity().times(Mat4.translation(0, 0, -30)).times(Mat4.scale(30, 40, 0.001));
+		this.shapes.box.draw(context, program_state, sky_transform, this.sky);
+ 		this.populate_grass(context, program_state);
 	}
 
 	draw_text_static(color_id,context,program_state, string_to_print,scale,x_pos,y_pos){
@@ -770,6 +778,7 @@ export class Obj_File_Demo extends Scene {
 		}
 	}
 }
+
 
 class Gouraud_Shader extends Shader {
     // This is a Shader using Phong_Shader as template

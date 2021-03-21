@@ -4,4 +4,3 @@ Make Tutorial
 Add Background Texture
 Add Grass
 Mouse Clicking Feature
-Sanchit will never check this file XD
