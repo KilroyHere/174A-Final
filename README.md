@@ -3,13 +3,15 @@
 
 #
 
+**Team Members: Sanchit Agarwal (105389151) ; Aryan Patel (005329756)**
+
 ## **Summary**
 
-A homage to the cult favorite Ball Blast. Rock Blast is an amazing cannon shooter game with the classic Space Invaders persona. In this game you control the cannon set upright pointing towards the array of falling rocks and boulders straight from the bowels of a mining quarry. Your cannon is customised to shoot rock-destroying missiles instead of the standard cannon balls. You can move your cannon in left or right directions to shoot at the falling rocks. The only catch here is that you can&#39;t catch the rocks using your cannon. If your cannon collides with any of the rocks or boulders, it&#39;s game over for you. However to compensate for this impishness we provide a chance to the player to collect coins to boost their scores. Depending on the size of the rock you destroy, you&#39;ll get coins of different values. Your score will be determined by the amount of time you survive this cataclysm and the coins you collect. ![](RackMultipart20210321-4-1m1qc0v_html_5193f235123bcf33.png)
+A homage to the cult favorite Ball Blast. Rock Blast is an amazing cannon shooter game with the classic Space Invaders persona. In this game you control the cannon set upright pointing towards the array of falling rocks and boulders straight from the bowels of a mining quarry. Your cannon is customised to shoot rock-destroying missiles instead of the standard cannon balls. You can move your cannon in left or right directions to shoot at the falling rocks. The only catch here is that you can&#39;t catch the rocks using your cannon. If your cannon collides with any of the rocks or boulders, it&#39;s game over for you. However to compensate for this impishness we provide a chance to the player to collect coins to boost their scores. Depending on the size of the rock you destroy, you&#39;ll get coins of different values. Your score will be determined by the amount of time you survive this cataclysm and the coins you collect. ![](RackMultipart20210321-4-dv0tx6_html_5193f235123bcf33.png)
 
 _Do you have what it takes to take on the bouncing geodudes? Play to find out!!!_
 
-## ![](RackMultipart20210321-4-1m1qc0v_html_815e459a6fcc3042.png) ![](RackMultipart20210321-4-1m1qc0v_html_46487124cab5e8d2.png)
+## ![](RackMultipart20210321-4-dv0tx6_html_815e459a6fcc3042.png) ![](RackMultipart20210321-4-dv0tx6_html_46487124cab5e8d2.png)
 
 ##
 
@@ -53,7 +55,7 @@ _Do you have what it takes to take on the bouncing geodudes? Play to find out!!!
 - Explosion
   - Explosion is a by-product of bullet-rock collision. As soon as the bullet collides with a big enough rock, the rock disappears and a collision sphere is created with expands and fades proportionally with time
 - Gravity
-  - Each object is given a custom time function and according to its time various calculations are made on the lines of 2nd equatio
+  - Each object is given a custom time function and according to its time various calculations are made on the lines of 2nd equation of motion to simulate gravity and the resulting motion due to it.
 
 **Roles**
 
