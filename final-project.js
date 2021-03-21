@@ -2,8 +2,8 @@ import {
 	defs,
 	tiny
 }
-from './common.js';
-import { Text_Line } from "./text-demo.js";
+from './examples/common.js';
+import { Text_Line } from "./examples/text-demo.js";
 // Pull these names into this module's scope for convenience:
 const {
 	Vector,
@@ -371,7 +371,7 @@ class Rock {
 }
 
 
-export class Obj_File_Demo extends Scene {
+export class final_project extends Scene {
 	constructor() {
 		super();
 		// Load the model file:
@@ -519,7 +519,7 @@ export class Obj_File_Demo extends Scene {
 	move_left() {
 		if(this.cannon_transform[0][3] > -6) {
 
-			let desired = this.cannon_transform.times(Mat4.translation(-1.2, 0, 0));
+			let desired = this.cannon_transform.times(Mat4.translation(-1.5, 0, 0));
 			this.cannon_transform = desired.map((x, i) => Vector.from(this.cannon_transform[i]).mix(x, 0.1));
 			let x = this.cannon_transform[0][3];
 		    this.wheel_1 = Mat4.identity().times(Mat4.translation(x, 0.75, 1)).times(Mat4.scale(0.5, 0.5, 0.5)).times(Mat4.rotation(- x / 1.5, 0, 0, 1));
@@ -528,7 +528,7 @@ export class Obj_File_Demo extends Scene {
 	}
 	move_right() {
 		if(this.cannon_transform[0][3] < 6) {
-			let desired = this.cannon_transform.times(Mat4.translation(1.2, 0, 0));
+			let desired = this.cannon_transform.times(Mat4.translation(1.5, 0, 0));
 			this.cannon_transform = desired.map((x, i) => Vector.from(this.cannon_transform[i]).mix(x, 0.1));
 			let x = this.cannon_transform[0][3];
 		    this.wheel_1 = Mat4.identity().times(Mat4.translation(x, 0.75, 1)).times(Mat4.scale(0.5, 0.5, 0.5)).times(Mat4.rotation(- x / 1.5, 0, 0, 1));
