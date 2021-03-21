@@ -10,7 +10,7 @@ A homage to the cult favorite Ball Blast. Rock Blast is an amazing cannon shoote
 
 _Do you have what it takes to take on the bouncing geodudes? Play to find out!!!_
 
-## ![](pic1.png) ![](pic2.png)
+## ![](assets/pic1.png) ![](assets.pic2.png)
 
 ## **Advanced Topics**
 
