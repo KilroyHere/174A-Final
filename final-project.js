@@ -726,9 +726,9 @@ export class final_project extends Scene {
 
 	draw_mainscreen_text(context,program_state){
         this.draw_text_static(1, context,program_state, "Welcome to Rock Blast!",0.3,-4.5, 12);
-        this.draw_text_static(1, context,program_state, "Ball Blast is an arcade game where",0.2,-5, 11);
+        this.draw_text_static(1, context,program_state, "Rock Blast is an arcade game where",0.2,-5, 11);
         this.draw_text_static(1, context,program_state, " where you have to use a cannon ",0.2,-5, 10.5);
-        this.draw_text_static(1, context,program_state, "  to shoot bombs at giant rocks to  ",0.2,-5, 10);
+        this.draw_text_static(1, context,program_state, "  to shoot missiles at giant rocks to  ",0.2,-5, 10);
         this.draw_text_static(1, context,program_state, "  smash them to smithereens,or in ",0.2,-5, 9.5);
         this.draw_text_static(1, context,program_state, "          this case,coins.",0.2,-5, 9);
 
